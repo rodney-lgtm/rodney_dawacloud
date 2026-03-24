@@ -26,7 +26,7 @@ const MakePaymentComponent = () => {
             data.append("amount", product.product_cost)
             data.append("phone", phone)
 
-            const response = await axios.post("https://dmuturi.alwaysdata.net/api/mpesa_payment")
+            const response = await axios.post("https://rodfelix.alwaysdata.net/api/mpesa_payment")
             console.log(response)
 
             if (response.status === 200) {
