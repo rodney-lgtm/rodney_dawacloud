@@ -2,124 +2,135 @@ import axios from "axios";
 import { useState } from "react";
 
 const AddProductsComponent = () => {
-    let [product_name, setProductName] = useState("")
-    let [product_cost, setProductCost] = useState("")
-    let [product_category, setProductCategory] = useState("")
-    let [product_description, setProductDescription] = useState("")
-    let [product_image, setProductImage] = useState("")
-    let [loading, setLoading] = useState("")
-    let [error, setError] = useState("")
-    let [success, setSuccess] = useState("")
+  const [productName, setProductName] = useState("");
+  const [productCost, setProductCost] = useState("");
+  const [productCategory, setProductCategory] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [productImage, setProductImage] = useState("");
 
+  const [loading, setLoading] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-    const handlesubmit = async (e) => {
-        e.preventDefault()
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading("Submitting product, please wait...");
+    setError("");
+    setSuccess("");
 
+    try {
+      const productData = new FormData();
+      productData.append("product_name", productName);
+      productData.append("product_cost", productCost);
+      productData.append("product_category", productCategory);
+      productData.append("product_description", productDescription);
+      productData.append("product_image", productImage);
 
-        setLoading("please wait...")
-        setError("")
-        setSuccess("")
+      const response = await axios.post(
+        "http://rodfelix.alwaysdata.net/api/add_product",
+        productData
+      );
 
-
-        try {
-            const product_data = new FormData()
-            product_data.append("product_name", product_name)
-            product_data.append("product_cost", product_cost)
-            product_data.append("product_category", product_category)
-            product_data.append("product_description", product_description)
-            product_data.append("product_image", product_image)
-
-            const response = await axios.post("http://rodfelix.alwaysdata.net/api/add_product", product_data)
-
-            if (response.status === 200) {
-                setSuccess(response.data.message)
-                setLoading("")
-
-
-
-            }
-
-        } catch (error) {
-            console.log(error.message)
-            setLoading("")
-            setError(error.message)
-
-        }
-
-
-
+      if (response.status === 200) {
+        setSuccess(response.data.message);
+        setLoading("");
+        setProductName("");
+        setProductCost("");
+        setProductCategory("");
+        setProductDescription("");
+        setProductImage("");
+      }
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Something went wrong");
+      setLoading("");
     }
+  };
 
+  return (
+    <div className="row justify-content-center mt-4">
+      <div className="col-md-6 card shadow p-4">
+        <h2 className="text-center mb-3">Add Product</h2>
 
+        {loading && <div className="alert alert-warning">{loading}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
 
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter Product Name"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              required
+            />
+          </div>
 
-    return (
-        <div className="row justify-content-center mt-4">
-            <div className="col-md-6 card shadow p-4">
-                <h2>Add Products</h2>
-                <h5 className="text-danger">{error}</h5>
-                <h5 className="text-success">{success}</h5>
-                <h5 className="text-warning">{loading}</h5>
+          <div className="mb-3">
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Enter Product Cost"
+              value={productCost}
+              onChange={(e) => setProductCost(e.target.value)}
+              required
+            />
+          </div>
 
+          <div className="mb-3">
+            <select
+              className="form-select"
+              value={productCategory}
+              onChange={(e) => setProductCategory(e.target.value)}
+              required
+            >
+              <option value="">Select Category</option>
+              <option value="Malaria Treatment">Malaria Treatment</option>
+              <option value="Stomach and Digestion">Stomach and Digestion</option>
+              <option value="Diabetes Care">Diabetes Care</option>
+              <option value="Antibiotics">Antibiotics</option>
+              <option value="Pain and Relief">Pain and Relief</option>
+            </select>
+          </div>
 
-                <form onSubmit={handlesubmit}>
-                    <input type="text"
-                        className="form-control"
-                        placeholder="Enter Your Product Name"
-                        value={product_name}
-                        onChange={(e) => {
-                            setProductName(e.target.value)
+          <div className="mb-3">
+            <textarea
+              className="form-control"
+              rows="5"
+              placeholder="Enter Product Description"
+              value={productDescription}
+              onChange={(e) => setProductDescription(e.target.value)}
+              required
+            ></textarea>
+          </div>
 
-                        }}
-                    />
-                    <br />
-                    <input type="number"
-                        className="form-control"
-                        placeholder="Enter the cost "
-                        value={product_cost}
-                        onChange={(e) => {
-                            setProductCost(e.target.value)
+          <div className="mb-3">
+            <label htmlFor="productImage" className="form-label">
+              Product Image
+            </label>
+            <input
+              type="file"
+              className="form-control"
+              id="productImage"
+              accept="image/*"
+              onChange={(e) => setProductImage(e.target.files[0])}
+              required
+            />
+          </div>
 
-                        }}
-                    />
-                    <br />
-                    <select
-                        className="form-select"
-                        value={product_category}
-                        onChange={(e) => { setProductCategory(e.target.value) }}>
-                        <option value="">Select category</option>
-                        <option value="Television">Malaria Treatment</option>
-                        <option value="Phones">Stomach and Digestion</option>
-                        <option value="Laptops">Diabetes Care</option>
-                        <option value="accessories">Antibiotics</option>
-                        <option value="healthcare">Pain and Relief</option>
-                    </select>
-                    <br />
-                    <textarea
-                        className="form-control"
-                        rows="5"
-                        placeholder="Enter Product Description"
-                        value={product_description}
-                        onChange={(e) => { setProductDescription(e.target.value) }}
-                    ></textarea>
-                    <br />
-                    <label htmlFor="form-label">Product Image</label>
-                    <input
-                        type="file"
-                        className="form-control"
-                        accept="image/*"
-                        onChange={(e) => { setProductImage(e.target.files[0]) }}
-                    />
-                    <br />
-                    <button className="btn btn-dark">Submit</button>
+          <button
+            className="btn btn-dark w-100"
+            type="submit"
+            disabled={loading !== ""}
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
 
-
-                </form>
-
-            </div>
-
-
-        </div>
-    )
-}
 export default AddProductsComponent;

@@ -2,69 +2,94 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const SignIncomponent = () => {
-    let [email, updateEmail] = useState("");
-    let [password, updatePassword] = useState("");
-    let [loading, updateLoading] = useState("");
-    let [success, updateSuccess] = useState("");
-    let [error, updateError] = useState("");
+const SignInComponent = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    //use useNavigate hook to automatically navigate to home component 
-    let navigater = useNavigate()
+  const [loading, setLoading] = useState("");
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const navigate = useNavigate();
 
-        updateError("");
-        updateSuccess("");
-        updateLoading("Please wait...")
-        try {
-            // we create the form data
-            const user_data = new FormData();
-            user_data.append("email", email);
-            user_data.append("password", password);
-            // get response form sevre after getting data
-            const response = await axios.post("https://rodfelix.alwaysdata.net/api/signin", user_data)
-            console.log(response);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading("Please wait...");
 
-            if (response.data.user) {
-                updateSuccess(response.data.message);
-                updateLoading("")
-                // to save user data after login
+    try {
+      const userData = new FormData();
+      userData.append("email", email);
+      userData.append("password", password);
 
-                // reroute to home page
+      const response = await axios.post(
+        "https://rodfelix.alwaysdata.net/api/signin",
+        userData
+      );
 
-                navigater("/")
-            }
-
-            else {
-                updateError(response.data.message);
-                updateLoading("");
-            }
-        } catch (error) {
-            updateError(error.message)
-            updateLoading("")
-
-        }
-
+      if (response.data.user) {
+        setSuccess(response.data.message);
+        setLoading("");
+        // Navigate to home page
+        navigate("/");
+      } else {
+        setError(response.data.message);
+        setLoading("");
+      }
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+      setLoading("");
     }
+  };
 
-    return (
-        <div className="row justify-content-center mt-4">
-            <div className="col-md-6 card shadow p-4">
-                <h1>Sign In </h1>
-                <h5 className="text-warning">{loading}</h5>
-                <h5 className="text-danger">{error}</h5>
-                <h5 className="text-success">{success}</h5>
+  return (
+    <div className="row justify-content-center mt-4">
+      <div className="col-md-6 card shadow p-4">
+        <h2 className="text-center mb-3">Sign In</h2>
 
-                <form onSubmit={handleSubmit}>
-                    <input type="email" className="form-control" placeholder="Email" required value={email} onChange={(e) => { updateEmail(e.target.value) }} /> <br />
-                    <input type="password" className="form-control" placeholder="Enter your password" required value={password} onChange={(e) => { updatePassword(e.target.value) }} /><br />
-                    <button className="btn btn-dark">Sign in</button> <br />
-                    <Link to="/signup">Already Have an Account?Sign Up</Link>
-                </form>
-            </div>
+        {loading && <div className="alert alert-warning">{loading}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
+
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <input
+              type="email"
+              className="form-control"
+              placeholder="Email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="mb-3">
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <button
+            className="btn btn-dark w-100"
+            type="submit"
+            disabled={loading !== ""}
+          >
+            {loading ? "Signing In..." : "Sign In"}
+          </button>
+        </form>
+
+        <div className="text-center mt-3">
+          <Link to="/signup">Don't have an account? Sign Up</Link>
         </div>
-    );
-}
-export default SignIncomponent;
+      </div>
+    </div>
+  );
+};
+
+export default SignInComponent;

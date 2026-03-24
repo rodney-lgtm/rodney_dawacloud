@@ -3,115 +3,117 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const SignUpComponent = () => {
-  let [username, updateUsername] = useState("")
-  let [phone, updatePhone] = useState("")
-  let [password, updatePassword] = useState("")
-  let [email, updateEmail] = useState("")
+  const [username, setUsername] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
 
-  // loading state variables
-  let [loading, updateLoading] = useState("")
-  let [success, updateSuccess] = useState("")
-  let [error, updateError] = useState("")
+  const [loading, setLoading] = useState("");
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
-  let handleSubmit = async (e) => {
-    // prevent form from reloading page
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading("Submitting data. Please wait...");
 
-    // alert user loading 
-    updateError("")
-    updateSuccess("")
-    updateLoading("Submitting data.Please wait...")
-    // confirm user data
-    console.log(username, email, phone, password)
-
-    // try sent  data to the server
     try {
-      const user_data = new FormData()
-      user_data.append("username", username)
-      user_data.append("email", email)
-      user_data.append("phone", phone)
-      user_data.append("password", password)
+      const userData = new FormData();
+      userData.append("username", username);
+      userData.append("email", email);
+      userData.append("phone", phone);
+      userData.append("password", password);
 
-      // use axios to sent data to server
-      const response = await axios.post("https://rodfelix.alwaysdata.net/api/signup", user_data)
-      console.log(response)
+      const response = await axios.post(
+        "https://rodfelix.alwaysdata.net/api/signup",
+        userData
+      );
 
       if (response.status === 200) {
-        updateSuccess(response.data.message)
-        updateLoading("")
-        updateUsername("")
-        updateEmail("")
-        updatePhone("")
-        updatePassword("")
+        setSuccess(response.data.message);
+        setLoading("");
+        setUsername("");
+        setEmail("");
+        setPhone("");
+        setPassword("");
       }
-    } catch (error) {
-      console.log(error)
-      updateLoading("")
-      updateError(error.message)
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Something went wrong");
+      setLoading("");
     }
-  }
-
+  };
 
   return (
     <div className="row justify-content-center mt-4">
       <div className="col-md-6 card shadow p-4">
-        <h2>Sign Up</h2>
+        <h2 className="text-center mb-3">Sign Up</h2>
 
-        <h5 className="text-warning">{loading}</h5>
-        <h5 className="text-danger">{error}</h5>
-        <h5 className="text-success">{success}</h5>
-
+        {loading && <div className="alert alert-warning">{loading}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
 
         <form onSubmit={handleSubmit}>
-          <input
-            className="form-control"
-            type="text"
-            placeholder="username"
-            required
-            value={username}
-            onChange={(e) => { updateUsername(e.target.value) }} />
-          <br />
+          <div className="mb-3">
+            <input
+              className="form-control"
+              type="text"
+              placeholder="Username"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
 
+          <div className="mb-3">
+            <input
+              className="form-control"
+              type="email"
+              placeholder="Email Address"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-          <input
-            className="form-control"
-            type="email"
-            placeholder="enter email"
-            required
-            value={email}
-            onChange={(e) => { updateEmail(e.target.value) }} />
-          <br />
+          <div className="mb-3">
+            <input
+              className="form-control"
+              type="tel"
+              placeholder="Phone Number"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </div>
 
+          <div className="mb-3">
+            <input
+              className="form-control"
+              type="password"
+              placeholder="Password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
 
-          <input
-            className="form-control"
-            type="tel"
-            placeholder="enter phone number"
-            required
-            value={phone}
-            onChange={(e) => { updatePhone(e.target.value) }} />
-          <br />
-
-
-          <input
-            className="form-control"
-            type="password"
-            placeholder="enter password"
-            required
-            value={password}
-            onChange={(e) => { updatePassword(e.target.value) }} />
-          <br />
-
-
-          <button className="btn btn-dark">
-            Sign Up
-          </button><br />
-
-          <Link to="/signin">Alredy have an account?Sign in</Link>
+          <button
+            className="btn btn-dark w-100"
+            type="submit"
+            disabled={loading !== ""}
+          >
+            {loading ? "Signing Up..." : "Sign Up"}
+          </button>
         </form>
+
+        <div className="text-center mt-3">
+          <Link to="/signin">Already have an account? Sign in</Link>
+        </div>
       </div>
     </div>
   );
+};
 
-}
 export default SignUpComponent;
