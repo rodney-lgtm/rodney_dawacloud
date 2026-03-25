@@ -31,7 +31,6 @@ const SignInComponent = () => {
       if (response.data.user) {
         setSuccess(response.data.message);
         setLoading("");
-        // Navigate to home page
         navigate("/");
       } else {
         setError(response.data.message);
@@ -44,39 +43,69 @@ const SignInComponent = () => {
   };
 
   return (
-    <div className="row justify-content-center mt-4">
-      <div className="col-md-6 card shadow p-4">
-        <h2 className="text-center mb-3">Sign In</h2>
+    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+      <div
+        className="card p-5 shadow"
+        style={{
+          width: "100%",
+          maxWidth: "500px",  // Increased max width
+          borderRadius: "15px",
+        }}
+      >
+        <h2 className="text-center mb-5 fw-bold" style={{ fontSize: "2rem" }}>
+          Welcome Back 
+        </h2>
 
-        {loading && <div className="alert alert-warning">{loading}</div>}
-        {error && <div className="alert alert-danger">{error}</div>}
-        {success && <div className="alert alert-success">{success}</div>}
+        {loading && (
+          <div className="alert alert-warning text-center py-2">{loading}</div>
+        )}
+        {error && (
+          <div className="alert alert-danger text-center py-2">{error}</div>
+        )}
+        {success && (
+          <div className="alert alert-success text-center py-2">{success}</div>
+        )}
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
+          <div className="mb-4">
+            <label className="form-label fw-semibold" style={{ fontSize: "1.1rem" }}>
+              Email
+            </label>
             <input
               type="email"
-              className="form-control"
-              placeholder="Email"
+              className="form-control rounded-pill py-3" // larger input height
+              placeholder="Enter your email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              style={{ fontSize: "1rem" }}
             />
           </div>
 
-          <div className="mb-3">
+          <div className="mb-4">
+            <label className="form-label fw-semibold" style={{ fontSize: "1.1rem" }}>
+              Password
+            </label>
             <input
               type="password"
-              className="form-control"
-              placeholder="Password"
+              className="form-control rounded-pill py-3"
+              placeholder="Enter your password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              style={{ fontSize: "1rem" }}
             />
           </div>
 
           <button
-            className="btn btn-dark w-100"
+            className="btn w-100 text-white rounded-pill"
+            style={{
+              background: "#212529",
+              border: "none",
+              padding: "15px", // larger button height
+              fontWeight: "bold",
+              fontSize: "1.1rem",
+            }}
             type="submit"
             disabled={loading !== ""}
           >
@@ -84,8 +113,13 @@ const SignInComponent = () => {
           </button>
         </form>
 
-        <div className="text-center mt-3">
-          <Link to="/signup">Don't have an account? Sign Up</Link>
+        <div className="text-center mt-4">
+          <small style={{ fontSize: "0.95rem" }}>
+            Don't have an account?{" "}
+            <Link to="/signup" className="fw-bold text-decoration-none">
+              Sign Up
+            </Link>
+          </small>
         </div>
       </div>
     </div>
