@@ -47,7 +47,7 @@ const SignUpComponent = () => {
         className="card p-5 shadow"
         style={{
           width: "100%",
-          maxWidth: "500px",  // comfortable size
+          maxWidth: "500px",  
           borderRadius: "15px",
         }}
       >
